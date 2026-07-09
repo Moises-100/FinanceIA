@@ -1,0 +1,972 @@
+Aqui está o código completo do seu site totalmente atualizado.
+
+Eu adicionei os campos de **Nome Completo** e **Telefone** na parte visual do formulário de cadastro (HTML) e atualizei a função de envio (`cadastrarUsuario`) para que ela guarde essas informações de forma organizada dentro do campo de metadados (`user_metadata`) de cada usuário no Supabase.
+
+Lembre-se apenas de recolocar a sua **URL** e **KEY** do Supabase nas linhas **765 e 766** antes de salvar o arquivo!
+
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinanceIA - Demonstrações Financeiras com IA</title>
+    <style>
+        /* Configurações Gerais e Cores Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: #334155;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3 {
+            color: #0f172a;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Barra de Navegação (Menu) */
+        header {
+            background-color: #0f172a;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .logo {
+            color: #3b82f6;
+            font-size: 24px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        nav a {
+            color: #cbd5e1;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #3b82f6;
+        }
+
+        .btn-nav {
+            background-color: #2563eb;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+        }
+
+        .btn-nav:hover {
+            background-color: #1d4ed8;
+            color: white;
+        }
+
+        /* Seção Início (Hero) */
+        .hero {
+            background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+            color: white;
+            padding: 100px 20px;
+        }
+
+        .hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 50px;
+        }
+
+        .hero-text {
+            flex: 1;
+        }
+
+        .hero h1 {
+            color: white;
+            font-size: 46px;
+            margin-bottom: 25px;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            color: #93c5fd;
+            font-size: 19px;
+            margin-bottom: 35px;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            background-color: #2563eb;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+        }
+
+        /* Card do Gráfico Lateral Simples */
+        .hero-chart-card {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+            max-width: 460px;
+            width: 100%;
+        }
+
+        .chart-header {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+
+        .chart-item {
+            margin-bottom: 20px;
+        }
+
+        .chart-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .chart-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #e2e8f0;
+            margin-bottom: 8px;
+        }
+
+        .chart-bar-bg {
+            background-color: rgba(255, 255, 255, 0.1);
+            height: 14px;
+            border-radius: 7px;
+            overflow: hidden;
+        }
+
+        .chart-bar {
+            height: 100%;
+            border-radius: 7px;
+        }
+
+        .bar-receita { width: 100%; background-color: #10b981; }
+        .bar-despesa { width: 68%; background-color: #ef4444; }
+        .bar-lucro { width: 32%; background-color: #3b82f6; }
+
+        /* Balão de Estatística */
+        .stat-box {
+            background-color: #eff6ff;
+            border-left: 5px solid #3b82f6;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 40px auto;
+            max-width: 800px;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-box p {
+            font-size: 18px;
+            color: #1e40af;
+            font-weight: 600;
+        }
+
+        /* Seções e Títulos */
+        section {
+            padding: 60px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 32px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        /* Grid de Recursos / Cards */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+
+        .card h3 {
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        /* Seção Conteúdos (Blog Dinâmico) */
+        .blog-card {
+            text-align: left;
+            overflow: hidden;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .blog-content {
+            padding: 25px;
+        }
+
+        .blog-tag {
+            display: inline-block;
+            background-color: #dbeafe;
+            color: #1e40af;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .blog-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .blog-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Feedback de Carregamento da API */
+        .loading-text {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: #64748b;
+            font-style: italic;
+            padding: 20px;
+        }
+
+        /* Tabela de Planos */
+        .plans-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .plan-card {
+            background-color: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 40px;
+            width: 320px;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .plan-card.premium {
+            border: 2px solid #3b82f6;
+            position: relative;
+        }
+
+        .plan-badge {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #3b82f6;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .price {
+            font-size: 36px;
+            font-weight: bold;
+            color: #0f172a;
+            margin: 20px 0;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .plan-features li {
+            margin-bottom: 10px;
+            color: #475569;
+        }
+
+        .plan-features li::before {
+            content: "✓ ";
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        /* Central de Ajuda */
+        .help-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 40px;
+        }
+
+        details {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #e2e8f0;
+        }
+
+        summary {
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+            color: #0f172a;
+        }
+
+        details p {
+            margin-top: 10px;
+            color: #475569;
+            font-size: 15px;
+        }
+
+        /* Formulário de Contato */
+        form {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            outline: none;
+        }
+
+        input:focus, textarea:focus {
+            border-color: #3b82f6;
+        }
+
+        .social-links {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-btn {
+            text-decoration: none;
+            color: #475569;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .social-btn:hover {
+            color: #3b82f6;
+        }
+
+        .success-box {
+            background-color: #ecfdf5;
+            border: 2px solid #10b981;
+            padding: 40px 30px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .success-icon {
+            font-size: 50px;
+            color: #10b981;
+            margin-bottom: 15px;
+        }
+
+        .success-box h4 {
+            color: #065f46;
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+
+        .success-box p {
+            color: #047857;
+            font-size: 15px;
+        }
+
+        /* Seção Quem Somos */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .member-card {
+            background-color: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .hero-container {
+                flex-direction: column;
+                text-align: center;
+            }
+            .hero h1 {
+                font-size: 32px;
+            }
+            .hero-chart-card {
+                margin: 0 auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <a href="#" class="logo">FinanceIA</a>
+            <nav>
+                <a href="#">Início</a>
+                <a href="#conteudos">Conteúdos</a>
+                <a href="#planos">Planos</a>
+                <a href="#ajuda">Central de Ajuda</a>
+                <a href="#quem-somos">Quem Somos</a>
+                <a href="javascript:void(0)" id="btn-auth" class="btn-nav" onclick="abrirModalAuth()">Sua Conta</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="hero">
+        <div class="hero-container">
+            <div class="hero-text">
+                <h1>Inteligência que organiza o seu negócio.</h1>
+                <p>A solução simples, intuitiva e acessível para controle de receitas, despesas e lucros do nanoempreendedor.</p>
+                <a href="#planos" class="btn-primary">Ver Planos do Projeto</a>
+            </div>
+            
+            <div class="hero-chart-card">
+                <div class="chart-header">
+                    <span>Demonstração de Contas</span>
+                    <span style="color: #10b981; font-size: 13px;">● FinanceIA Ativo</span>
+                </div>
+                
+                <div class="chart-item">
+                    <div class="chart-label">
+                        <span>Receitas</span>
+                        <span style="color: #10b981; font-weight: bold;">R$ 98.765,00</span>
+                    </div>
+                    <div class="chart-bar-bg">
+                        <div class="chart-bar bar-receita"></div>
+                    </div>
+                </div>
+
+                <div class="chart-item">
+                    <div class="chart-label">
+                        <span>Despesas</span>
+                        <span style="color: #ef4444; font-weight: bold;">R$ 67.890,00</span>
+                    </div>
+                    <div class="chart-bar-bg">
+                        <div class="chart-bar bar-despesa"></div>
+                    </div>
+                </div>
+
+                <div class="chart-item">
+                    <div class="chart-label">
+                        <span>Lucro Líquido</span>
+                        <span style="color: #3b82f6; font-weight: bold;">R$ 30.875,00</span>
+                    </div>
+                    <div class="chart-bar-bg">
+                        <div class="chart-bar bar-lucro"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="stat-box">
+            <p>"De acordo com o IBGE, 48% das empresas brasileiras fecham em até três anos e o principal motivo é a falta de gestão financeira."</p>
+        </div>
+
+        <div class="grid-3">
+            <div class="card">
+                <h3>Fluxo de Caixa</h3>
+                <p>Monitore suas entradas e saídas de dinheiro em tempo real sem complicações burocráticas.</p>
+            </div>
+            <div class="card">
+                <h3>Relatórios Simples</h3>
+                <p>Demonstrações financeiras automáticas explicadas de um jeito que você realmente entende.</p>
+            </div>
+            <div class="card">
+                <h3>Assistente com IA</h3>
+                <p>Uma Inteligência Artificial integrada para responder suas dúvidas de negócios instantaneamente.</p>
+            </div>
+        </div>
+    </div>
+
+    <section id="conteudos">
+        <div class="container">
+            <h2 class="section-title">Conteúdos & Novidades</h2>
+            
+            <div class="grid-3" id="blog-posts-container">
+                <p class="loading-text">Buscando postagens mais recentes do blog...</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="planos">
+        <div class="container">
+            <h2 class="section-title">Planos do Aplicativo</h2>
+            <div class="plans-container">
+                <div class="plan-card">
+                    <h3>Plano Inicial</h3>
+                    <div class="price">R$ 0</div>
+                    <ul class="plan-features">
+                        <li>Fluxo de caixa básico</li>
+                        <li>Registro de receitas e despesas</li>
+                        <li>1 Relatório mensal básico</li>
+                    </ul>
+                    <a href="#" class="btn-primary" style="background-color: #64748b; width: 100%; text-align: center;">Começar Grátis</a>
+                </div>
+                <div class="plan-card premium">
+                    <div class="plan-badge">Mais Popular</div>
+                    <h3>Plano Premium IA</h3>
+                    <div class="price">Em breve</div>
+                    <ul class="plan-features">
+                        <li>Tudo do plano básico</li>
+                        <li>Análises completas com Inteligência Artificial</li>
+                        <li>Relatórios ilimitados</li>
+                        <li>Suporte prioritário</li>
+                    </ul>
+                    <a href="#" class="btn-primary" style="width: 100%; text-align: center;">Conhecer Solução</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="ajuda">
+        <div class="container">
+            <h2 class="section-title">Central de Ajuda & Contato</h2>
+            <div class="help-container">
+                <div>
+                    <h3 style="margin-bottom: 20px;">Perguntas Frequentes</h3>
+                    <details>
+                        <summary>Como a IA ajuda nas finanças do meu negócio?</summary>
+                        <p>A IA analisa os dados de entrada e saída informados e traduz gráficos contábeis complexos em textos simples, dando conselhos sobre como melhorar seu lucro.</p>
+                    </details>
+                    <details>
+                        <summary>O site e o aplicativo usam a mesma conta?</summary>
+                        <p>Sim! Os dados de acesso que você cadastrar no aplicativo serão exatamente os mesmos utilizados para fazer login no nosso portal web.</p>
+                    </details>
+                    <details>
+                        <summary>O projeto é gratuito?</summary>
+                        <p>A nossa proposta inicial apresentada no TCC conta com um modelo demonstrativo totalmente funcional e acessível de forma gratuita.</p>
+                    </details>
+                </div>
+                
+                <div id="contact-area">
+                    <h3 style="margin-bottom: 20px;">Fale Conosco</h3>
+                    
+                    <form id="contact-form" action="https://formspree.io/f/xjgqropn" method="POST">
+                        <div class="form-group">
+                            <label>Nome</label>
+                            <input type="text" name="nome" placeholder="Seu nome completo" required>
+                        </div>
+                        <div class="form-group">
+                            <label>E-mail</label>
+                            <input type="email" name="_replyto" placeholder="seu@email.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Telefone (Opcional)</label>
+                            <input type="tel" name="telefone" placeholder="(13) 99999-9999">
+                        </div>
+                        <div class="form-group">
+                            <label>Mensagem</label>
+                            <textarea rows="4" name="mensagem" placeholder="Como podemos ajudar?" required></textarea>
+                        </div>
+                        <button type="submit" id="submit-btn" class="btn-primary" style="border: none; width: 100%; cursor: pointer;">Enviar Mensagem</button>
+                    </form>
+
+                    <div id="success-message" class="success-box" style="display: none;">
+                        <div class="success-icon">✓</div>
+                        <h4>Mensagem Enviada!</h4>
+                        <p>Obrigado pelo contato. Recebemos seu feedback, nossa equipe entrará em contato em breve. fique atento ao seu email e o seu telefone.</p>
+                    </div>
+
+                    <div class="social-links">
+                        <a href="#" class="social-btn">ℹ️ Instagram</a>
+                        <a href="#" class="social-btn">💬 WhatsApp</a>
+                        <a href="mailto:contato.financeia@gmail.com" class="social-btn">✉️ E-mail</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="quem-somos" style="border-bottom: none;">
+        <div class="container">
+            <h2 class="section-title">Quem Somos</h2>
+            <p style="text-align: center; max-width: 600px; margin: -20px auto 40px auto; color: #64748b;">Conheça os desenvolvedores por trás do projeto FinanceIA apresentado na ETEC.</p>
+            
+            <div class="team-grid">
+                <div class="member-card">
+                    <img src="anajulia.jpeg" alt="Ana Julia" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 15px;">
+                    <h4>Ana Julia Emidio</h4>
+                    <p style="font-size: 14px; color: #64748b;">Desenvolvimento / TCC</p>
+                </div>
+                <div class="member-card">
+                    <img src="luana.jpeg" alt="Luana Cristina" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 15px;">
+                    <h4>Luana Cristina</h4>
+                    <p style="font-size: 14px; color: #64748b;">Desenvolvimento / TCC</p>
+                </div>
+                <div class="member-card">
+                    <img src="moises.jpeg" alt="Moisés Barbosa" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 15px;">
+                    <h4>Moisés Barbosa</h4>
+                    <p style="font-size: 14px; color: #64748b;">Desenvolvimento / TCC</p>
+                </div>
+                <div class="member-card">
+                    <img src="vivian.jpeg" alt="Vivian Quinelli" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 15px;">
+                    <h4>Vivian Quinelli</h4>
+                    <p style="font-size: 14px; color: #64748b;">Desenvolvimento / TCC</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 FinanceIA - Trabalho de Conclusão de Curso (TCC). ETEC Praia Grande.</p>
+    </footer>
+
+    <div id="modal-auth" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center;">
+        <div style="background: white; padding: 30px; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); position: relative;">
+            
+            <button onclick="fecharModalAuth()" style="position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 20px; cursor: pointer; color: #64748b;">&times;</button>
+            
+            <div id="container-login">
+                <h3 style="margin-bottom: 20px; text-align: center;">Entrar no FinanceIA</h3>
+                <form id="form-login" onsubmit="loginUsuario(event)">
+                    <div class="form-group">
+                        <label>E-mail</label>
+                        <input type="email" id="login-email" placeholder="seu@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Senha</label>
+                        <input type="password" id="login-senha" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn-primary" style="border: none; width: 100%; cursor: pointer; margin-top: 10px;">Entrar</button>
+                </form>
+                <p style="margin-top: 20px; text-align: center; font-size: 14px; color: #64748b;">
+                    Não tem conta? <a href="javascript:void(0)" onclick="alternarAbasAuth('cadastro')" style="color: #2563eb; text-decoration: none; font-weight: bold;">Cadastre-se</a>
+                </p>
+            </div>
+
+            <div id="container-cadastro" style="display: none;">
+                <h3 style="margin-bottom: 20px; text-align: center;">Criar Nova Conta</h3>
+                <form id="form-cadastro" onsubmit="cadastrarUsuario(event)">
+                    <div class="form-group">
+                        <label>Nome Completo</label>
+                        <input type="text" id="cadastro-nome" placeholder="Seu nome" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Telefone</label>
+                        <input type="tel" id="cadastro-telefone" placeholder="(00) 00000-0000" required>
+                    </div>
+                    <div class="form-group">
+                        <label>E-mail</label>
+                        <input type="email" id="cadastro-email" placeholder="seu@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Senha (mínimo 6 caracteres)</label>
+                        <input type="password" id="cadastro-senha" placeholder="••••••••" minlength="6" required>
+                    </div>
+                    <button type="submit" class="btn-primary" style="border: none; width: 100%; cursor: pointer; margin-top: 10px; background-color: #10b981;">Criar Conta</button>
+                </form>
+                <p style="margin-top: 20px; text-align: center; font-size: 14px; color: #64748b;">
+                    Já tem conta? <a href="javascript:void(0)" onclick="alternarAbasAuth('login')" style="color: #2563eb; text-decoration: none; font-weight: bold;">Fazer Login</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        // --- 0. CONFIGURAÇÃO E AUTENTICAÇÃO DO SUPABASE ---
+        const SUPABASE_URL = "https://hqrtrdysjjkyaswzkeyi.supabase.co"; 
+        const SUPABASE_KEY = "sb_publishable_zt4pzdYvYc5PhzeRchih9Q_YSw1Z5n7";     
+
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        function abrirModalAuth() {
+            const btnAuth = document.getElementById('btn-auth');
+            if (btnAuth.innerText === "Sair") {
+                logoutUsuario();
+                return;
+            }
+            document.getElementById('modal-auth').style.display = 'flex';
+        }
+
+        function fecharModalAuth() {
+            document.getElementById('modal-auth').style.display = 'none';
+        }
+
+        function alternarAbasAuth(aba) {
+            if (aba === 'cadastro') {
+                document.getElementById('container-login').style.display = 'none';
+                document.getElementById('container-cadastro').style.display = 'block';
+            } else {
+                document.getElementById('container-login').style.display = 'block';
+                document.getElementById('container-cadastro').style.display = 'none';
+            }
+        }
+
+        async function cadastrarUsuario(event) {
+            event.preventDefault();
+            const nome = document.getElementById('cadastro-nome').value;
+            const telefone = document.getElementById('cadastro-telefone').value;
+            const email = document.getElementById('cadastro-email').value;
+            const password = document.getElementById('cadastro-senha').value;
+
+            const { data, error } = await _supabase.auth.signUp({ 
+                email, 
+                password,
+                options: {
+                    data: {
+                        full_name: nome,
+                        phone_number: telefone
+                    }
+                }
+            });
+
+            if (error) {
+                alert("Erro ao cadastrar: " + error.message);
+            } else {
+                alert("Cadastro realizado com sucesso! Se configurou confirmação, cheque seu e-mail.");
+                alternarAbasAuth('login');
+            }
+        }
+
+        async function loginUsuario(event) {
+            event.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-senha').value;
+
+            const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
+
+            if (error) {
+                alert("Erro no login: " + error.message);
+            } else {
+                fecharModalAuth();
+                document.getElementById('form-login').reset();
+            }
+        }
+
+        async function logoutUsuario() {
+            const { error } = await _supabase.auth.signOut();
+            if (error) alert("Erro ao sair: " + error.message);
+        }
+
+       // 1. Criamos essa função vazia temporariamente aqui em cima para o código NÃO TRAVAR
+function carregarTelaMinhasContas() {
+    console.log("Botão clicado! Futuramente carregará os dados do Supabase.");
+    alert("Aqui abrirá o seu painel de receitas, despesas e custos!");
+}
+
+// 2. O seu bloco do olheiro do Supabase ajustado para não dar erros:
+_supabase.auth.onAuthStateChange((event, session) => {
+    const btnAuth = document.getElementById('btn-auth');
+    
+    // Tenta encontrar a sua barra usando seletores comuns. 
+    // Se a classe do seu menu não for '.navbar-menu', o código apenas não cria o link, mas NÃO TRAVA o site.
+    const menuContainer = document.querySelector('.navbar-menu') || document.querySelector('.nav') || document.querySelector('nav'); 
+
+    if (session) {
+        btnAuth.innerText = "Sair";
+        btnAuth.style.backgroundColor = "#ef4444";
+        btnAuth.onclick = logoutUsuario;
+        console.log("Usuário conectado:", session.user.email);
+
+        // Cria o link "Minhas Contas" dinamicamente de forma segura
+        if (menuContainer && !document.getElementById('menu-minhas-contas')) {
+            const linkMinhasContas = document.createElement('a');
+            linkMinhasContas.id = 'menu-minhas-contas';
+            linkMinhasContas.href = '#minhas-contas';
+            linkMinhasContas.innerText = 'Minhas Contas';
+            linkMinhasContas.style.cursor = 'pointer';
+            linkMinhasContas.style.marginLeft = '15px'; // Espaçamento básico
+            
+            // Agora a função existe e o código não vai quebrar!
+            linkMinhasContas.addEventListener('click', carregarTelaMinhasContas);
+
+            menuContainer.appendChild(linkMinhasContas);
+        }
+
+    } else {
+        btnAuth.innerText = "Sua Conta";
+        btnAuth.style.backgroundColor = "#2563eb";
+        
+        // Remove o onclick temporariamente para evitar erros caso 'abrirModalAuth' não exista
+       btnAuth.onclick = () => {
+            // 1. Abre o modal na tela (mude para 'abrirModalAuth' ou a sua função equivalente se o nome for diferente)
+            if (typeof abrirModalAuth === "function") {
+                abrirModalAuth();
+            }
+            
+            // 2. Garante que ele vai abrir direto na aba de login
+            if (typeof alternarAbasAuth === "function") {
+                alternarAbasAuth('login');
+            }
+        };
+        // Se deslogar, limpa o item do menu
+        const linkExistente = document.getElementById('menu-minhas-contas');
+        if (linkExistente) {
+            linkExistente.remove();
+        }
+    }
+});
+
+        // --- 1. SCRIPT DO FORMULÁRIO (FORMSPREE) ---
+        const form = document.getElementById('contact-form');
+        const successMessage = document.getElementById('success-message');
+        const submitBtn = document.getElementById('submit-btn');
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); 
+            submitBtn.innerText = "Enviando...";
+            submitBtn.disabled = true;
+
+            const data = new FormData(form);
+
+            fetch(form.action, {
+                method: form.method,
+                body: data,
+                headers: { 'Accept': 'application/json' }
+            }).then(response => {
+                if (response.ok) {
+                    form.style.display = 'none'; 
+                    successMessage.style.display = 'block'; 
+                    form.reset(); 
+                } else {
+                    submitBtn.innerText = "Enviar Mensagem";
+                    submitBtn.disabled = false;
+                    alert('Ops! Ocorreu um problema ao enviar.');
+                }
+            }).catch(error => {
+                submitBtn.innerText = "Enviar Mensagem";
+                submitBtn.disabled = false;
+                alert('Erro de conexão.');
+            });
+        });
+
+        // --- 2. SCRIPT DE INTEGRAÇÃO DO SEU BLOG ---
+        const BLOG_API_URL = "https://public-api.wordpress.com/wp/v2/sites/financeiablog.wordpress.com/posts?per_page=3";
+
+        function loadBlogPosts() {
+            const container = document.getElementById('blog-posts-container');
+
+            fetch(BLOG_API_URL)
+                .then(response => response.json())
+                .then(posts => {
+                    container.innerHTML = "";
+
+                    if (!posts || posts.length === 0 || posts.message === "Site privado") {
+                        container.innerHTML = `<p class="loading-text">Nenhum post público encontrado. Lembre-se de Lançar/Publicar seu site no painel do WordPress!</p>`;
+                        return;
+                    }
+
+                    posts.forEach(post => {
+                        const card = document.createElement('div');
+                        card.className = "card blog-card";
+
+                        let summaryText = post.excerpt.rendered.replace(/<[^>]*>/g, '');
+                        if (summaryText.length > 120) {
+                            summaryText = summaryText.substring(0, 120) + "...";
+                        }
+
+                        card.innerHTML = `
+                            <div class="blog-content">
+                                <span class="blog-tag">Novidade</span>
+                                <h3 style="font-size: 18px; margin-bottom: 10px; text-align: left;">${post.title.rendered}</h3>
+                                <p style="text-align: left; font-size: 14px; color: #475569;">${summaryText}</p>
+                                <a href="${post.link}" target="_blank" class="blog-link">Leia mais →</a>
+                            </div>
+                        `;
+                        container.appendChild(card);
+                    });
+                })
+                .catch(error => {
+                    console.error("Erro ao carregar o blog:", error);
+                    container.innerHTML = `<p class="loading-text" style="color: #ef4444;">Não foi possível carregar as novidades do blog. Verifique se o site do WordPress está publicado como público.</p>`;
+                });
+        }
+
+        // Inicializa o blog
+        loadBlogPosts();
+    </script>
+</body>
+</html>
+
+```
